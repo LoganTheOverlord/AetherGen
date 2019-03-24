@@ -16,6 +16,8 @@ public class PopulatorCaves2 extends BlockPopulator {
     protected int checkAreaSize = 8;
 
     private Random random;
+    
+    Main p;
 
     public static int caveRarity = 4;//7
     public static int caveFrequency = 40;//40
@@ -27,6 +29,18 @@ public class PopulatorCaves2 extends BlockPopulator {
     public static int caveSystemPocketMinSize = 1;
     public static int caveSystemPocketMaxSize = 4;
     public static boolean evenCaveDistribution = false;
+    public static double radiusMultiplier = 1;
+    
+    public PopulatorCaves2(Main p) {
+    	this.p = p;
+    	this.caveRarity = p.cave_rarity;
+    	this.caveFrequency = p.cave_frequency;
+    	this.caveMinAltitude = p.cave_min;
+    	this.caveMaxAltitude = p.cave_max;
+    	this.caveSystemPocketChance = p.cave_pocket_chance;
+    	this.individualCaveRarity = p.cave_individual_rarity;
+    	this.radiusMultiplier = p.cave_radius;
+    }
 
     public int worldHeightCap = 240;
 
@@ -50,12 +64,14 @@ public class PopulatorCaves2 extends BlockPopulator {
     }
 
     protected void generateLargeCaveNode(long seed, Chunk chunk, double x, double y, double z) {
-        generateCaveNode(seed, chunk, x, y, z, 1.0F + this.random.nextFloat() * 6.0F, 0.0F, 0.0F, -1, -1, 0.5D);
+        generateCaveNode(seed, chunk, x, y, z, 1.0F + this.random.nextFloat() * 6.0F * (float) radiusMultiplier, 0.0F, 0.0F, -1, -1, 0.5D);
     }
 
     protected void generateCaveNode(long seed, Chunk chunk, double x, double y, double z, float radius, float angelOffset, float angel, int angle, int maxAngle, double scale) {
         int chunkX = chunk.getX();
         int chunkZ = chunk.getZ();
+        
+        radius = (float) (radius * radiusMultiplier);
 
         double realX = chunkX * 16 + 8;
         double realZ = chunkZ * 16 + 8;

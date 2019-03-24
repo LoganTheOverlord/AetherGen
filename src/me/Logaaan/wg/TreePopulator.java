@@ -49,6 +49,12 @@ public class TreePopulator extends BlockPopulator {
 				for (int z = 0; z < 16; z++) {
 					int xx = chunk.getX() * 16 + x;
 					int zz = chunk.getZ() * 16 + z;
+					int ii = p.ah;
+					if (new Random().nextInt(34000*p.dung) < 2) {
+						if (chunk.getBlock(x, ii, z).getType().equals(Material.AIR)) {
+							paste(world,xx,ii,zz,"dungeon1");
+						}
+					}
 					for (int y = world.getHighestBlockYAt(xx,zz) + 1; y > 1; y--) {
 						if (chunk.getBlock(x, y, z).getType().equals(Material.MYCEL)) {
 							if (new Random().nextInt(40) == 21) {
@@ -71,17 +77,17 @@ public class TreePopulator extends BlockPopulator {
 									chunk.getBlock(x , y+1, z).setTypeIdAndData(Material.LONG_GRASS.getId(), (byte) 1, false);
 								}
 								if (world.getBiome(xx,zz).equals(Biome.ICE_PLAINS) || world.getBiome(xx,zz).equals(Biome.ICE_MOUNTAINS)) {
-									if (new Random().nextInt(95) == 21) {
+									if (new Random().nextInt(p.treechance + 20) == 21) {
 										final int yy = y;
-										int pine = new Random().nextInt(3)+1;
+										int pine = new Random().nextInt(p.pinecount-1)+1;
 										paste(world,xx,y,zz,"pine"+pine);
 									}
 									chunk.getBlock(x , y+1, z).setTypeIdAndData(Material.SNOW.getId(), (byte) new Random().nextInt(4), false);
 								}
 								if (world.getBiome(xx,zz).equals(Biome.OCEAN) || world.getBiome(xx,zz).equals(Biome.DEEP_OCEAN)) {
-									if (new Random().nextInt(95) == 21) {
+									if (new Random().nextInt(p.treechance + 20) == 21) {
 										final int yy = y;
-										int pine = new Random().nextInt(3)+1;
+										int pine = new Random().nextInt(p.pinecount-1)+1;
 										paste(world,xx,y,zz,"pine"+pine);
 									}
 									if (new Random().nextInt(25) < 2) {
@@ -99,29 +105,40 @@ public class TreePopulator extends BlockPopulator {
 										}
 									}
 								}
-								if (world.getBiome(xx,zz).equals(Biome.EXTREME_HILLS)) {
-									if (new Random().nextInt(95) == 21) {
+								if (world.getBiome(xx,zz).equals(Biome.MESA) || world.getBiome(xx, zz).equals(Biome.MESA_BRYCE) || world.getBiome(xx,zz).equals(Biome.MESA_PLATEAU) || world.getBiome(xx, zz).equals(Biome.MESA_PLATEAU_FOREST) || world.getBiome(xx, zz).equals(Biome.MESA_PLATEAU_FOREST_MOUNTAINS) || world.getBiome(xx, zz).equals(Biome.MESA_PLATEAU_MOUNTAINS)) {
+									
+									if (new Random().nextInt(p.bigtree - 100) == 51) {
+										int big = new Random().nextInt(1)+1;
+										paste(world,xx,y-1,zz,"bigtree"+big);
+									}
+								}
+								if (world.getBiome(xx,zz).equals(Biome.EXTREME_HILLS) || world.getBiome(xx, zz).equals(Biome.EXTREME_HILLS_MOUNTAINS) || world.getBiome(xx,zz).equals(Biome.EXTREME_HILLS_PLUS) || world.getBiome(xx, zz).equals(Biome.EXTREME_HILLS_PLUS_MOUNTAINS)) {
+									if (new Random().nextInt(p.treechance + 10) == 21) {
 										if (new Random().nextBoolean()) {
 											final int yy = y;
-											int pine = new Random().nextInt(2)+1;
+											int pine = new Random().nextInt(p.normalcount-1)+1;
 											paste(world,xx,y,zz,"normal"+pine);
 										} else {
 											final int yy = y;
-											int pine = new Random().nextInt(3)+1;
+											int pine = new Random().nextInt(p.pinecount-1)+1;
 											paste(world,xx,y,zz,"pine"+pine);
 										}
 									}
+									if (new Random().nextInt(p.bigtree + 50) == 51) {
+										int big = new Random().nextInt(1)+1;
+										paste(world,xx,y-1,zz,"bigtree"+big);
+									}
 								}
 								if (world.getBiome(xx,zz).equals(Biome.SWAMPLAND) || world.getBiome(xx,zz).equals(Biome.SWAMPLAND_MOUNTAINS)) {
-									if (new Random().nextInt(95) == 21) {
+									if (new Random().nextInt(p.treechance + 35) == 21) {
 										final int yy = y;
-												int pine = new Random().nextInt(2)+1;
+												int pine = new Random().nextInt(p.normalcount-1)+1;
 												paste(world,xx,y,zz,"normal"+pine);
 
 									}
 								}
 								if (world.getBiome(xx,zz).equals(Biome.DESERT) || world.getBiome(xx,zz).equals(Biome.DESERT_HILLS)) {
-									if (new Random().nextInt(75) == 21) {
+									if (new Random().nextInt(p.treechance + 54) == 21) {
 										final int yy = y;
 										int pine = new Random().nextInt(3)+1;
 										paste(world,xx,y,zz,"deadwood");
@@ -129,43 +146,59 @@ public class TreePopulator extends BlockPopulator {
 									}
 								}
 								if (world.getBiome(xx,zz).equals(Biome.FOREST) || world.getBiome(xx,zz).equals(Biome.FOREST_HILLS)) {
-									if (new Random().nextInt(75) == 21) {
+									if (new Random().nextInt(p.treechance + 4) == 21) {
 										final int yy = y;
-										int pine = new Random().nextInt(2)+1;
+										int pine = new Random().nextInt(p.normalcount-1)+1;
 										paste(world,xx,y,zz,"normal"+pine);
 
 									}
 									if (new Random().nextInt(300) == 1) {
 										generateLog(world,xx,y+1,zz, new Random().nextBoolean());
 									}
+									if (new Random().nextInt(p.bigtree + 50) == 51) {
+										int big = new Random().nextInt(1)+1;
+										paste(world,xx,y-1,zz,"bigtree"+big);
+									}
 								}
 								
 								if (world.getBiome(xx,zz).equals(Biome.ROOFED_FOREST) || world.getBiome(xx,zz).equals(Biome.ROOFED_FOREST_MOUNTAINS)) {
-									if (new Random().nextInt(75) == 21) {
-										int pine = new Random().nextInt(2)+1;
+									if (new Random().nextInt(p.treechance + 20) == 21) {
+										int pine = new Random().nextInt(p.normalcount)+1;
 										paste(world,xx,y,zz,"normal"+pine);
 
+									}
+									if (new Random().nextInt(p.bigtree + 20) == 51) {
+										int big = new Random().nextInt(1)+1;
+										paste(world,xx,y-1,zz,"bigtree"+big);
 									}
 								}
 								
 								if (world.getBiome(xx,zz).equals(Biome.SAVANNA_MOUNTAINS) || world.getBiome(xx,zz).equals(Biome.SAVANNA) || world.getBiome(xx,zz).equals(Biome.SAVANNA_PLATEAU) || world.getBiome(xx,zz).equals(Biome.SAVANNA_PLATEAU_MOUNTAINS)) {
-									if (new Random().nextInt(95) == 21) {
+									if (new Random().nextInt(p.treechance + 80) == 21) {
 										final int yy = y;
-										int pine = new Random().nextInt(2)+1;
+										int pine = new Random().nextInt(p.normalcount-1)+1;
 										paste(world,xx,y,zz,"normal"+pine);
 
+									}
+									if (new Random().nextInt(p.bigtree + 20) == 51) {
+										int big = new Random().nextInt(1)+1;
+										paste(world,xx,y-1,zz,"bigtree"+big);
 									}
 								}
 								
 								if (world.getBiome(xx,zz).equals(Biome.JUNGLE) || world.getBiome(xx,zz).equals(Biome.JUNGLE_HILLS)) {
-									if (new Random().nextInt(87) == 21) {
+									if (new Random().nextInt(p.treechance + 40) == 21) {
 										if (new Random().nextBoolean()) {
 										final int yy = y;
-										int pine = new Random().nextInt(2)+1;
+										int pine = new Random().nextInt(p.junglecount-1)+1;
 										paste(world,xx,y,zz,"jungle"+pine);} else {
 
 											int pine = new Random().nextInt(2)+1;
 											paste(world,xx,y,zz,"bamboo"+pine);
+										}
+										if (new Random().nextInt(p.bigtree + 20) == 51) {
+											int big = new Random().nextInt(1)+1;
+											paste(world,xx,y-1,zz,"bigtree"+big);
 										}
 
 									}
@@ -177,11 +210,15 @@ public class TreePopulator extends BlockPopulator {
 									}
 								}
 								if (world.getBiome(xx,zz).equals(Biome.JUNGLE_EDGE_MOUNTAINS)) {
-									if (new Random().nextInt(80) == 21) {
+									if (new Random().nextInt(p.treechance + 20) == 21) {
 										final int yy = y;
-										int pine = new Random().nextInt(2)+1;
+										int pine = new Random().nextInt(p.junglecount-1)+1;
 										paste(world,xx,y,zz,"jungle"+pine);
 
+									}
+									if (new Random().nextInt(p.bigtree + 20) == 51) {
+										int big = new Random().nextInt(1)+1;
+										paste(world,xx,y-1,zz,"bigtree"+big);
 									}
 								}
 								
@@ -192,15 +229,15 @@ public class TreePopulator extends BlockPopulator {
 								}
 								
 								if (world.getBiome(xx,zz).equals(Biome.BIRCH_FOREST) || world.getBiome(xx,zz).equals(Biome.BIRCH_FOREST_HILLS)) {
-									if (new Random().nextInt(95) == 21) {
-										int pine = new Random().nextInt(3)+1;
+									if (new Random().nextInt(p.treechance + 35) == 21) {
+										int pine = new Random().nextInt(p.birchcount-1)+1;
 										paste(world,xx,y,zz,"birch"+pine);
 									}
 								}
 								
 								if (world.getBiome(xx,zz).equals(Biome.COLD_TAIGA_HILLS) || world.getBiome(xx,zz).equals(Biome.COLD_TAIGA)) {
-									if (new Random().nextInt(95) == 21) {
-										int pine = new Random().nextInt(3)+1;
+									if (new Random().nextInt(p.treechance + 20) == 21) {
+										int pine = new Random().nextInt(p.pinecount-1)+1;
 										paste(world,xx,y,zz,"pine"+pine);
 									}
 								}
@@ -220,6 +257,10 @@ public class TreePopulator extends BlockPopulator {
 										chunk.getBlock(x, y + 2, z).setType(Material.STONE);
 										chunk.getBlock(x, y + 3, z).setType(Material.STONE);chunk.getBlock(x, y + 1, z + 1).setType(Material.STONE);chunk.getBlock(x, y + 1, z - 1).setType(Material.STONE);
 										chunk.getBlock(x + 1, y + 1, z).setType(Material.STONE);chunk.getBlock(x - 1, y + 1, z).setType(Material.STONE);
+									}
+									if (new Random().nextInt(p.treechance + 200) == 21) {
+										int pine = new Random().nextInt(p.pinecount-1)+1;
+										paste(world,xx,y,zz,"birch"+pine);
 									}
 									if (new Random().nextInt(12000) == 523) {
 										int pine = 1;
@@ -409,9 +450,6 @@ public class TreePopulator extends BlockPopulator {
 	}
 	
 	public void paste(World w, int x, int y, int z, String f) {
-		p.getServer().getScheduler().runTaskLater(p, new BukkitRunnable() {
-			@Override
-			public void run() {
 		Location loc = new Location(w,x,y,z);
 		File file = new File(p.getDataFolder()+"/schematics/prefab_"+f+".schematic");
 		Vector v = new Vector(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()); // loc is your location variable
@@ -433,7 +471,7 @@ public class TreePopulator extends BlockPopulator {
 		} catch (MaxChangedBlocksException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		}}, new Random().nextInt(5));
+		}
 	}
 
 }
