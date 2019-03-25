@@ -71,7 +71,7 @@ public class CustomGen extends ChunkGenerator {
 					                for (int y = currentHeight; y > p.ah - (generator_float.noise(chunkX*16+xl | chunkZ*8+chunkX*8+X | baseX + X, chunkZ*16+xz | chunkZ*8+chunkX*8+Z | baseZ + Z, p.f, p.a)*7D-13D) ; y--) {
 						                if (generator_float.noise(chunkX*16+xl | chunkZ*8+chunkX*8+X | baseX + X, chunkZ*16+xz | chunkZ*8+chunkX*8+Z | baseZ + Z, p.f, p.a) > p.sp) {
 						                		if (y == currentHeight) {
-							                		if (world.getBiome(chunkX*16+xl, chunkZ*16+xz).equals(Biome.DESERT) || world.getBiome(chunkX*16+xl, chunkZ*16+xz).equals(Biome.DESERT_HILLS) || world.getBiome(chunkX*16+xl, chunkZ*16+xz).equals(Biome.DESERT_MOUNTAINS)) {
+							                		if (world.getBiome(chunkX*16+xl, chunkZ*16+xz).equals(Biome.DESERT) || world.getBiome(chunkX*16+xl, chunkZ*16+xz).equals(Biome.DESERT_HILLS)) {
 							                			chunk.setBlock(X, y, Z, Material.SAND);
 							                		} else {
 							                			chunk.setBlock(X, y, Z, Material.GRASS);
@@ -101,7 +101,7 @@ public class CustomGen extends ChunkGenerator {
 				                for (int y = currentHeight; y > p.ah2 - (generator_float_2.noise(chunkX*16+X, chunkZ*16+Z, p.f2, p.a2)*7D-13D) ; y--) {
 					                if (generator_float_2.noise(chunkX*16+X, chunkZ*16+Z, p.f2, p.a2) > p.sp2) {
 					                	if (y == currentHeight) {
-					                		if (world.getBiome(chunkX*16+X, chunkZ*16+Z).equals(Biome.DESERT) || world.getBiome(chunkX*16+X, chunkZ*16+Z).equals(Biome.DESERT_HILLS) || world.getBiome(chunkX*16+X, chunkZ*16+Z).equals(Biome.DESERT_MOUNTAINS)) {
+					                		if (world.getBiome(chunkX*16+X, chunkZ*16+Z).equals(Biome.DESERT) || world.getBiome(chunkX*16+X, chunkZ*16+Z).equals(Biome.DESERT_HILLS)) {
 					                			chunk.setBlock(X, y, Z, Material.SAND);
 					                		} else {
 					                			chunk.setBlock(X, y, Z, Material.GRASS);

@@ -171,8 +171,8 @@ public class PopulatorCaves2 extends BlockPopulator {
                 for (int zz = zFrom; (!waterFound) && (zz < zTo); zz++) {
                     for (int yy = yTo + 1; (!waterFound) && (yy >= yFrom - 1); yy--) {
                         if (yy >= 0 && yy < this.worldHeightCap) {
-                            int block = chunk.getBlock(xx, yy, zz).getTypeId();
-                            if (block == Material.WATER.getId() || block == Material.STATIONARY_WATER.getId()) {
+                            Material block = chunk.getBlock(xx, yy, zz).getType();
+                            if (block == Material.WATER || block == Material.LEGACY_STATIONARY_WATER) {
                                 waterFound = true;
                             }
                             if ((yy != yFrom - 1) && (xx != xFrom) && (xx != xTo - 1) && (zz != zFrom) && (zz != zTo - 1))
@@ -198,9 +198,9 @@ public class PopulatorCaves2 extends BlockPopulator {
                             double modY = ((yy - 1) + 0.5D - y) / offsetY;
                             if ((modY > -0.7D) && (modX * modX + modY * modY + modZ * modZ < 1.0D)) {
 
-                                int material = chunk.getBlock(xx, yy, zz).getTypeId();;
-                                int materialAbove = chunk.getBlock(xx, yy + 1, zz).getTypeId();
-                                if (material == Material.GRASS.getId() || material == Material.MYCEL.getId()) {
+                                Material material = chunk.getBlock(xx, yy, zz).getType();;
+                                Material materialAbove = chunk.getBlock(xx, yy + 1, zz).getType();
+                                if (material == Material.GRASS || material == Material.MYCELIUM) {
                                     grassFound = true;
                                 }
                                 //TODO: check this

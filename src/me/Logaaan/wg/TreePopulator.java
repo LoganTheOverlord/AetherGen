@@ -1,9 +1,12 @@
 package me.Logaaan.wg;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,20 +15,30 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Chest;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Leaves;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 import org.bukkit.util.noise.SimplexOctaveGenerator;
 
-import com.sk89q.worldedit.CuboidClipboard;
+
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.MaxChangedBlocksException;
-import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
-import com.sk89q.worldedit.data.DataException;
-import com.sk89q.worldedit.schematic.SchematicFormat;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
+import com.sk89q.worldedit.function.operation.Operation;
+import com.sk89q.worldedit.function.operation.Operations;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.session.ClipboardHolder;
+import com.sk89q.worldedit.session.PasteBuilder;
 
 public class TreePopulator extends BlockPopulator {
 	
@@ -56,7 +69,7 @@ public class TreePopulator extends BlockPopulator {
 						}
 					}
 					for (int y = world.getHighestBlockYAt(xx,zz) + 1; y > 1; y--) {
-						if (chunk.getBlock(x, y, z).getType().equals(Material.MYCEL)) {
+						if (chunk.getBlock(x, y, z).getType().equals(Material.MYCELIUM)) {
 							if (new Random().nextInt(40) == 21) {
 								world.generateTree(new Location(world,xx,y+1,zz), new Random().nextBoolean() ? TreeType.RED_MUSHROOM : TreeType.BROWN_MUSHROOM);
 							}
@@ -74,15 +87,14 @@ public class TreePopulator extends BlockPopulator {
 							}
 							if (stopwater == false) {
 								if (new Random().nextInt(3) == 1) {
-									chunk.getBlock(x , y+1, z).setTypeIdAndData(Material.LONG_GRASS.getId(), (byte) 1, false);
+									//chunk.getBlock(x , y+1, z).setType(Material.TALL_GRASS);
 								}
-								if (world.getBiome(xx,zz).equals(Biome.ICE_PLAINS) || world.getBiome(xx,zz).equals(Biome.ICE_MOUNTAINS)) {
+								if (world.getBiome(xx,zz).equals(Biome.PLAINS) || world.getBiome(xx,zz).equals(Biome.SNOWY_MOUNTAINS)) {
 									if (new Random().nextInt(p.treechance + 20) == 21) {
 										final int yy = y;
 										int pine = new Random().nextInt(p.pinecount-1)+1;
 										paste(world,xx,y,zz,"pine"+pine);
 									}
-									chunk.getBlock(x , y+1, z).setTypeIdAndData(Material.SNOW.getId(), (byte) new Random().nextInt(4), false);
 								}
 								if (world.getBiome(xx,zz).equals(Biome.OCEAN) || world.getBiome(xx,zz).equals(Biome.DEEP_OCEAN)) {
 									if (new Random().nextInt(p.treechance + 20) == 21) {
@@ -105,14 +117,14 @@ public class TreePopulator extends BlockPopulator {
 										}
 									}
 								}
-								if (world.getBiome(xx,zz).equals(Biome.MESA) || world.getBiome(xx, zz).equals(Biome.MESA_BRYCE) || world.getBiome(xx,zz).equals(Biome.MESA_PLATEAU) || world.getBiome(xx, zz).equals(Biome.MESA_PLATEAU_FOREST) || world.getBiome(xx, zz).equals(Biome.MESA_PLATEAU_FOREST_MOUNTAINS) || world.getBiome(xx, zz).equals(Biome.MESA_PLATEAU_MOUNTAINS)) {
+								if (world.getBiome(xx,zz).equals(Biome.BADLANDS) || world.getBiome(xx, zz).equals(Biome.BADLANDS_PLATEAU) || world.getBiome(xx,zz).equals(Biome.ERODED_BADLANDS) || world.getBiome(xx, zz).equals(Biome.MODIFIED_BADLANDS_PLATEAU) || world.getBiome(xx, zz).equals(Biome.MODIFIED_WOODED_BADLANDS_PLATEAU) || world.getBiome(xx, zz).equals(Biome.WOODED_BADLANDS_PLATEAU)) {
 									
 									if (new Random().nextInt(p.bigtree - 100) == 51) {
 										int big = new Random().nextInt(1)+1;
 										paste(world,xx,y-1,zz,"bigtree"+big);
 									}
 								}
-								if (world.getBiome(xx,zz).equals(Biome.EXTREME_HILLS) || world.getBiome(xx, zz).equals(Biome.EXTREME_HILLS_MOUNTAINS) || world.getBiome(xx,zz).equals(Biome.EXTREME_HILLS_PLUS) || world.getBiome(xx, zz).equals(Biome.EXTREME_HILLS_PLUS_MOUNTAINS)) {
+								if (world.getBiome(xx,zz).equals(Biome.GIANT_SPRUCE_TAIGA_HILLS) || world.getBiome(xx, zz).equals(Biome.GIANT_TREE_TAIGA_HILLS)) {
 									if (new Random().nextInt(p.treechance + 10) == 21) {
 										if (new Random().nextBoolean()) {
 											final int yy = y;
@@ -129,7 +141,7 @@ public class TreePopulator extends BlockPopulator {
 										paste(world,xx,y-1,zz,"bigtree"+big);
 									}
 								}
-								if (world.getBiome(xx,zz).equals(Biome.SWAMPLAND) || world.getBiome(xx,zz).equals(Biome.SWAMPLAND_MOUNTAINS)) {
+								if (world.getBiome(xx,zz).equals(Biome.SWAMP) || world.getBiome(xx,zz).equals(Biome.SWAMP_HILLS)) {
 									if (new Random().nextInt(p.treechance + 35) == 21) {
 										final int yy = y;
 												int pine = new Random().nextInt(p.normalcount-1)+1;
@@ -145,7 +157,7 @@ public class TreePopulator extends BlockPopulator {
 
 									}
 								}
-								if (world.getBiome(xx,zz).equals(Biome.FOREST) || world.getBiome(xx,zz).equals(Biome.FOREST_HILLS)) {
+								if (world.getBiome(xx,zz).equals(Biome.FOREST) || world.getBiome(xx,zz).equals(Biome.BIRCH_FOREST_HILLS)) {
 									if (new Random().nextInt(p.treechance + 4) == 21) {
 										final int yy = y;
 										int pine = new Random().nextInt(p.normalcount-1)+1;
@@ -161,7 +173,7 @@ public class TreePopulator extends BlockPopulator {
 									}
 								}
 								
-								if (world.getBiome(xx,zz).equals(Biome.ROOFED_FOREST) || world.getBiome(xx,zz).equals(Biome.ROOFED_FOREST_MOUNTAINS)) {
+								if (world.getBiome(xx,zz).equals(Biome.DARK_FOREST) || world.getBiome(xx,zz).equals(Biome.DARK_FOREST_HILLS)) {
 									if (new Random().nextInt(p.treechance + 20) == 21) {
 										int pine = new Random().nextInt(p.normalcount)+1;
 										paste(world,xx,y,zz,"normal"+pine);
@@ -173,7 +185,7 @@ public class TreePopulator extends BlockPopulator {
 									}
 								}
 								
-								if (world.getBiome(xx,zz).equals(Biome.SAVANNA_MOUNTAINS) || world.getBiome(xx,zz).equals(Biome.SAVANNA) || world.getBiome(xx,zz).equals(Biome.SAVANNA_PLATEAU) || world.getBiome(xx,zz).equals(Biome.SAVANNA_PLATEAU_MOUNTAINS)) {
+								if (world.getBiome(xx,zz).equals(Biome.SHATTERED_SAVANNA_PLATEAU) || world.getBiome(xx,zz).equals(Biome.SAVANNA) || world.getBiome(xx,zz).equals(Biome.SAVANNA_PLATEAU) || world.getBiome(xx,zz).equals(Biome.SHATTERED_SAVANNA)) {
 									if (new Random().nextInt(p.treechance + 80) == 21) {
 										final int yy = y;
 										int pine = new Random().nextInt(p.normalcount-1)+1;
@@ -209,7 +221,7 @@ public class TreePopulator extends BlockPopulator {
 										chunk.getBlock(x + 1, y + 1, z).setType(Material.MOSSY_COBBLESTONE);chunk.getBlock(x - 1, y + 1, z).setType(Material.MOSSY_COBBLESTONE);
 									}
 								}
-								if (world.getBiome(xx,zz).equals(Biome.JUNGLE_EDGE_MOUNTAINS)) {
+								if (world.getBiome(xx,zz).equals(Biome.JUNGLE_EDGE)) {
 									if (new Random().nextInt(p.treechance + 20) == 21) {
 										final int yy = y;
 										int pine = new Random().nextInt(p.junglecount-1)+1;
@@ -222,7 +234,7 @@ public class TreePopulator extends BlockPopulator {
 									}
 								}
 								
-								if (world.getBiome(xx,zz).equals(Biome.JUNGLE_EDGE) || world.getBiome(xx,zz).equals(Biome.JUNGLE_MOUNTAINS)) {
+								if (world.getBiome(xx,zz).equals(Biome.JUNGLE_EDGE) || world.getBiome(xx,zz).equals(Biome.JUNGLE_HILLS)) {
 									if (new Random().nextInt(22) == 21) {
 										world.generateTree(new Location(world,xx,y+1,zz), TreeType.JUNGLE_BUSH);
 									}
@@ -235,7 +247,7 @@ public class TreePopulator extends BlockPopulator {
 									}
 								}
 								
-								if (world.getBiome(xx,zz).equals(Biome.COLD_TAIGA_HILLS) || world.getBiome(xx,zz).equals(Biome.COLD_TAIGA)) {
+								if (world.getBiome(xx,zz).equals(Biome.SNOWY_TAIGA) || world.getBiome(xx,zz).equals(Biome.SNOWY_TAIGA_HILLS)) {
 									if (new Random().nextInt(p.treechance + 20) == 21) {
 										int pine = new Random().nextInt(p.pinecount-1)+1;
 										paste(world,xx,y,zz,"pine"+pine);
@@ -244,13 +256,13 @@ public class TreePopulator extends BlockPopulator {
 								
 								if (world.getBiome(xx,zz).equals(Biome.PLAINS) || world.getBiome(xx,zz).equals(Biome.SUNFLOWER_PLAINS)) {
 									if (new Random().nextInt(3) == 2) {
-										chunk.getBlock(x, y+1, z).setTypeId(new Random().nextBoolean() ? Material.YELLOW_FLOWER.getId() :  Material.RED_ROSE.getId());
+										chunk.getBlock(x, y+1, z).setType(new Random().nextBoolean() ? Material.SUNFLOWER :  Material.ROSE_BUSH);
 									}
 									if (new Random().nextInt(500) == 324) {
-										chunk.getBlock(x, y+1, z).setTypeId(Material.PUMPKIN.getId());
+										chunk.getBlock(x, y+1, z).setType(Material.PUMPKIN);
 									}
 									if (new Random().nextInt(100) == 20) {
-										chunk.getBlock(x, y+1, z).setTypeId(Material.BROWN_MUSHROOM.getId());
+										chunk.getBlock(x, y+1, z).setType(Material.BROWN_MUSHROOM);
 									}
 									if (new Random().nextInt(400) == 11) {
 										chunk.getBlock(x, y + 1, z).setType(Material.STONE);
@@ -266,19 +278,6 @@ public class TreePopulator extends BlockPopulator {
 										int pine = 1;
 										paste(world,xx,y,zz,"house"+pine);
 									}
-									if (p.aether && p.goodies) {
-									if (p.ah <= y) {
-										if (new Random().nextInt(1200) == 271) {
-											chunk.getBlock(x, y+1, z).setTypeId(Material.CHEST.getId());
-											Chest c = (Chest) chunk.getBlock(x, y+1, z).getState();
-											for (int i = 1; i  < new Random().nextInt(6); i++) {
-												int rr = new Random().nextInt(428);
-												c.getBlockInventory().addItem(new ItemStack(Material.getMaterial(rr)));
-											}
-										}
-									}
-									}
-
 								}
 								
 							}  else {
@@ -381,7 +380,7 @@ public class TreePopulator extends BlockPopulator {
 						if (stopwater == true) {
 							if (y <= 45) {
 								stopc = 0;
-								chunk.getBlock(x, y, z).setType(Material.STATIONARY_LAVA);
+								chunk.getBlock(x, y, z).setType(Material.LEGACY_STATIONARY_LAVA);
 							}
 						}
 					}
@@ -423,7 +422,7 @@ public class TreePopulator extends BlockPopulator {
 				if (w.getBlockAt(new Location(w,x,y-1,z+i)).getType().equals(Material.AIR)) {
 					break;
 				} else {
-					w.getBlockAt(new Location(w,x,y,z+i)).setType(Material.LOG);
+					w.getBlockAt(new Location(w,x,y,z+i)).setType(Material.JUNGLE_LOG);
 					if (shroom) {
 						if (new Random().nextInt(5) == 3) {
 							w.getBlockAt(new Location(w,x,y,z+i)).setType(new Random().nextBoolean() ? Material.BROWN_MUSHROOM : Material.RED_MUSHROOM);
@@ -438,7 +437,7 @@ public class TreePopulator extends BlockPopulator {
 				if (w.getBlockAt(new Location(w,x+i,y-1,z)).getType().equals(Material.AIR)) {
 					break;
 				} else {
-					w.getBlockAt(new Location(w,x+i,y,z)).setType(Material.LOG);
+					w.getBlockAt(new Location(w,x+i,y,z)).setType(Material.JUNGLE_LOG);
 					if (shroom) {
 						if (new Random().nextInt(5) == 3) {
 							w.getBlockAt(new Location(w,x+1,y,z)).setType(new Random().nextBoolean() ? Material.BROWN_MUSHROOM : Material.RED_MUSHROOM);
@@ -450,28 +449,45 @@ public class TreePopulator extends BlockPopulator {
 	}
 	
 	public void paste(World w, int x, int y, int z, String f) {
-		Location loc = new Location(w,x,y,z);
+	/*	Location loc = new Location(w,x,y,z);
 		File file = new File(p.getDataFolder()+"/schematics/prefab_"+f+".schematic");
-		Vector v = new Vector(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()); // loc is your location variable
-		EditSession es = WorldEdit.getInstance().getEditSessionFactory().getEditSession((com.sk89q.worldedit.world.World) new BukkitWorld(loc.getWorld()), WorldEdit.getInstance().getConfiguration().maxChangeLimit);
-		SchematicFormat format = SchematicFormat.getFormat(file);
-		CuboidClipboard cc = null;
-		try {
-			cc = format.load(file);
-		} catch (DataException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			cc.rotate2D(new Random().nextInt(360));
-			cc.paste(es, v, true);
-		} catch (MaxChangedBlocksException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	 
+	        ClipboardFormat format = ClipboardFormats.findByFile(file);
+	 
+	        try (ClipboardReader reader = format.getReader(new FileInputStream(file))) { //Loading Operation
+	 
+	            Clipboard clipboard = reader.read();
+
+	 
+	            Location location = loc;
+	            WorldEditPlugin worldEditPlugin = (WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit");
+	 
+	            EditSession session = worldEditPlugin.getWorldEdit().getEditSessionFactory().getEditSession(new BukkitWorld(location.getWorld()), -1);
+	            try { //Pasting Operation
+	            	BlockVector3 v = BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+	                Operation operation = new ClipboardHolder(clipboard)
+	                        .createPaste(session)
+	                        .to(v)
+	                        .ignoreAirBlocks(true)
+	                        .build();
+	                Operations.complete(operation);
+	    
+	            } catch (WorldEditException e) {
+	                // TODO Auto-generated catch block
+	                e.printStackTrace();
+	            }
+	 
+	 
+	        } catch (FileNotFoundException e) {
+	            
+	            // TODO Auto-generated catch block
+	            e.printStackTrace();
+	        } catch (IOException e) {
+	            
+	            // TODO Auto-generated catch block
+	            e.printStackTrace();
+	        }
+*/
 	}
 
 }
